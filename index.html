@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>试用期六个月</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- ========== 主菜单 ========== -->
+  <div id="screen-menu" class="screen active">
+    <div class="menu-bg-particles" id="particles"></div>
+    <div class="menu-content">
+      <div class="game-logo" id="gameLogo">
+        <div class="logo-icon">⚡</div>
+        <h1>试用期六个月</h1>
+        <p class="subtitle">AI 产品团队生存挑战</p>
+      </div>
+      <div class="menu-buttons">
+        <button class="btn btn-primary" onclick="UI.showScreen('screen-character')">
+          <span class="btn-icon">🎮</span> 开始游戏
+        </button>
+        <button class="btn btn-secondary" onclick="UI.showScreen('screen-learning')">
+          <span class="btn-icon">📖</span> 学习手册
+        </button>
+        <button class="btn btn-ghost" onclick="UI.showScreen('screen-about')">
+          <span class="btn-icon">ℹ️</span> 关于游戏
+        </button>
+      </div>
+      <div class="secret-trigger" id="secretTrigger"></div>
+    </div>
+  </div>
+
+  <!-- ========== 角色选择 ========== -->
+  <div id="screen-character" class="screen">
+    <div class="screen-header">
+      <button class="btn-back" onclick="UI.showScreen('screen-menu')">← 返回</button>
+      <h2>选择你的角色</h2>
+    </div>
+    <div class="character-grid" id="characterGrid"></div>
+  </div>
+
+  <!-- ========== 关卡选择 ========== -->
+  <div id="screen-level" class="screen">
+    <div class="screen-header">
+      <button class="btn-back" onclick="UI.showScreen('screen-character')">← 返回</button>
+      <h2>选择关卡</h2>
+      <div class="selected-role" id="selectedRoleDisplay"></div>
+    </div>
+    <div class="level-grid" id="levelGrid"></div>
+  </div>
+
+  <!-- ========== 学习手册 ========== -->
+  <div id="screen-learning" class="screen">
+    <div class="screen-header">
+      <button class="btn-back" onclick="UI.showScreen('screen-menu')">← 返回</button>
+      <h2>学习手册</h2>
+    </div>
+    <div class="learning-tabs" id="learningTabs"></div>
+    <div class="learning-content" id="learningContent"></div>
+  </div>
+
+  <!-- ========== 关于游戏 ========== -->
+  <div id="screen-about" class="screen">
+    <div class="screen-header">
+      <button class="btn-back" onclick="UI.showScreen('screen-menu')">← 返回</button>
+      <h2>关于游戏</h2>
+    </div>
+    <div class="about-content">
+      <div class="about-card">
+        <h3>🎮 游戏玩法</h3>
+        <p>在五条车道中左右移动，<strong>躲避障碍物</strong>（红色）、<strong>收集奖励</strong>（绿色）。</p>
+        <p>命中障碍物扣血，命中收集物加血。</p>
+      </div>
+      <div class="about-card">
+        <h3>⏱️ 游戏规则</h3>
+        <p>每局游戏上限 <strong>2 分钟</strong>，存活时间越长分数越高。</p>
+        <p>达到目标分数可解锁下一关卡及老板角色。</p>
+      </div>
+      <div class="about-card">
+        <h3>🎯 游戏目的</h3>
+        <p>了解 AI 产品团队中各角色的工作职责与痛点。</p>
+        <p>体验从入职到转正的成长之路。</p>
+      </div>
+      <div class="about-card">
+        <h3>🕹️ 操作方式</h3>
+        <p><strong>PC：</strong>← → 方向键移动</p>
+        <p><strong>移动端：</strong>左右滑动 或 点击屏幕左右侧</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 暗门测试面板 ========== -->
+  <div id="screen-secret" class="screen">
+    <div class="screen-header">
+      <button class="btn-back" onclick="UI.showScreen('screen-menu')">← 返回</button>
+      <h2>🔓 测试模式</h2>
+    </div>
+    <div class="secret-panel">
+      <p class="secret-hint">自由选择任意角色和关卡，不受积分限制</p>
+      <div class="secret-select">
+        <label>角色</label>
+        <select id="secretCharacter">
+          <option value="pm">产品经理</option>
+          <option value="algorithm">大模型算法</option>
+          <option value="backend">后端工程师</option>
+          <option value="boss">老板</option>
+        </select>
+      </div>
+      <div class="secret-select">
+        <label>关卡</label>
+        <select id="secretLevel">
+          <option value="1">第一关 · 入职一个月</option>
+          <option value="2">第二关 · 入职三个月</option>
+          <option value="3">第三关 · 入职六个月</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="Game.startFromSecret()">
+        <span class="btn-icon">🚀</span> 直接开始
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== 游戏主界面 ========== -->
+  <div id="screen-game" class="screen">
+    <div class="game-hud">
+      <div class="hud-left">
+        <div class="hud-health" id="hudHealth"></div>
+      </div>
+      <div class="hud-center">
+        <div class="hud-time" id="hudTime">02:00</div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-score">
+          <span id="hudScore">0</span>
+          <span class="score-label">分</span>
+        </div>
+      </div>
+    </div>
+    <div class="game-area" id="gameArea">
+      <canvas id="gameCanvas"></canvas>
+    </div>
+    <div class="game-touch-controls">
+      <div class="touch-left" id="touchLeft"></div>
+      <div class="touch-right" id="touchRight"></div>
+    </div>
+    <button class="btn-pause" id="btnPause" onclick="Game.togglePause()">⏸</button>
+  </div>
+
+  <!-- ========== 暂停界面 ========== -->
+  <div id="overlay-pause" class="overlay">
+    <div class="overlay-card">
+      <h2>游戏暂停</h2>
+      <div class="overlay-buttons">
+        <button class="btn btn-primary" onclick="Game.togglePause()">继续游戏</button>
+        <button class="btn btn-ghost" onclick="Game.quit()">退出</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 游戏结束界面 ========== -->
+  <div id="overlay-gameover" class="overlay">
+    <div class="overlay-card gameover-card">
+      <div class="gameover-title" id="gameoverTitle">游戏结束</div>
+      <div class="gameover-stats">
+        <div class="stat-item">
+          <span class="stat-label">存活时间</span>
+          <span class="stat-value" id="statTime">0s</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">最终得分</span>
+          <span class="stat-value" id="statScore">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">收集物</span>
+          <span class="stat-value" id="statCollected">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">障碍物命中</span>
+          <span class="stat-value" id="statHit">0</span>
+        </div>
+      </div>
+      <div class="gameover-unlock" id="gameoverUnlock"></div>
+      <div class="overlay-buttons">
+        <button class="btn btn-primary" onclick="Game.restart()">再来一局</button>
+        <button class="btn btn-secondary" onclick="Game.quit()">返回菜单</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 倒计时 ========== -->
+  <div id="overlay-countdown" class="overlay">
+    <div class="countdown-number" id="countdownNumber">3</div>
+  </div>
+
+  <!-- ========== 物品名称弹出 ========== -->
+  <div class="item-popup" id="itemPopup"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
